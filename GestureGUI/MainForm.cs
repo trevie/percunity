@@ -210,6 +210,18 @@ namespace GestureGUI
             txtLog.Invoke(new AddLogDelegate(delegate(string s) { txtLog.AppendText(s); }), new object[] { msg });
         }
 
+        private delegate void UpdatelblLeftDelegate(string msg);
+        public void UpdatelblLeft(string msg)
+        {
+            txtLog.Invoke(new UpdatelblLeftDelegate(delegate(string s) { lblLeft.Text = s; }), new object[] { msg });
+        }
+
+        private delegate void UpdatelblRightDelegate(string msg);
+        public void UpdatelblRight(string msg)
+        {
+            txtLog.Invoke(new UpdatelblRightDelegate(delegate(string s) { lblRight.Text = s; }), new object[] { msg });
+        }
+
 
         private void Stop_Click(object sender, EventArgs e)
         {
@@ -290,7 +302,7 @@ namespace GestureGUI
                                 || (node.body & PXCMGesture.GeoNode.Label.LABEL_FINGER_RING) != 0
                                 || (node.body & PXCMGesture.GeoNode.Label.LABEL_FINGER_PINKY) != 0)
                             {
-                                //Log("Node (" + i + ", " + j + "): " + node.body + "\n");
+                                
                                 if (hand == PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_PRIMARY)
                                     fingers[0]++;
                                 else if (hand == PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_SECONDARY)
@@ -298,11 +310,12 @@ namespace GestureGUI
                                 else
                                     Log("Unknown hand above!\n");
                             }
+                            //Log("Node (" + i + ", " + j + "): " + node.body + "\n");
 
                             g.DrawEllipse(j > 5 ? red : green, nodes[i][j].positionImage.x - sz / 2, nodes[i][j].positionImage.y - sz / 2, sz, sz);
                         } // all nodes
-                        Log(fingers[0] + " primary fingers up\n");
-                        Log(fingers[1] + " secondary fingers up\n");
+                        //Log(fingers[0] + " primary fingers up\n");
+                        //Log(fingers[1] + " secondary fingers up\n");
                     } // both hands
                     
                     if (Params.Checked)
@@ -326,11 +339,27 @@ namespace GestureGUI
                         }
                     }
                 } // using Pens
-                //nodes[0][0].
-                Log("Primary Index (" + nodes[0][0].positionWorld.x
-                    + ", " + nodes[0][0].positionWorld.y
-                    + ", " + nodes[0][0].positionWorld.z
-                    + ")");
+
+                if (nodes[0][8].body > 0 && nodes[0][8].positionWorld.x < 0
+                    && nodes[1][8].body > 0 && nodes[1][8].positionWorld.x < 0)
+                    UpdatelblRight("Both");
+                else if (nodes[0][8].body > 0 && nodes[0][8].positionWorld.x < 0)
+                    UpdatelblRight("Primary");
+                else if (nodes[1][8].body > 0 && nodes[1][8].positionWorld.x < 0)
+                    UpdatelblRight("Secondary");
+                else
+                    UpdatelblRight("(none)");
+
+                if (nodes[0][8].body > 0 && nodes[0][8].positionWorld.x >= 0
+                    && nodes[1][8].body > 0 && nodes[1][8].positionWorld.x >= 0)
+                    UpdatelblLeft("Both");
+                else if (nodes[0][8].body > 0 && nodes[0][8].positionWorld.x >= 0)
+                    UpdatelblLeft("Primary");
+                else if (nodes[1][8].body > 0 && nodes[1][8].positionWorld.x >= 0)
+                    UpdatelblLeft("Secondary");
+                else
+                    UpdatelblLeft("(none)");
+                //Log(nodes[0][8].body + " and " + nodes[1][8].body + "\n");
                 
                 g.Dispose();
             } // lock
