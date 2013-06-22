@@ -15,7 +15,7 @@ namespace GestureGUI
         private PXCMSession session;
         private volatile bool closing = false;
         public volatile bool stop = false;
-        private PXCMGesture.GeoNode[][] nodes = null;
+        //private PXCMGesture.GeoNode[][] nodes = null;
         private Bitmap bitmap = null;
         private Hashtable pictures;
         private Timer timer = new Timer();
@@ -204,6 +204,13 @@ namespace GestureGUI
             Status2.Invoke(new UpdateStatusDelegate(delegate(string s) { StatusLabel.Text = s; }), new object[] { status });
         }
 
+        private delegate void AddLogDelegate(string msg);
+        public void Log(string msg)
+        {
+            txtLog.Invoke(new AddLogDelegate(delegate(string s) { txtLog.AppendText(s); }), new object[] { msg });
+        }
+
+
         private void Stop_Click(object sender, EventArgs e)
         {
             stop = true;
@@ -241,26 +248,93 @@ namespace GestureGUI
                 Graphics g = Graphics.FromImage(bitmap);
                 using (Pen red = new Pen(Color.Red, 3.0f), green = new Pen(Color.Green, 3.0f), cyan = new Pen(Color.Cyan, 3.0f))
                 {
+                    PXCMGesture.GeoNode node;
+                    PXCMGesture.GeoNode.Label body;
+                    int[] fingers = new int[] {0,0};
+                    //int fing = 0;
+                    PXCMGesture.GeoNode.Label hand = PXCMGesture.GeoNode.Label.LABEL_ANY;
                     for (int i = 0; i < 2; i++)
                     {
                         for (int j = 0; j < 10; j++)
                         {
-                            if (nodes[i][j].body <= 0) continue;
-                            float sz = (j == 0) ? 10 : ((nodes[i][j].radiusImage>5)?nodes[i][j].radiusImage:5);
+                            node = nodes[i][j];
+                            if (node.body <= 0) continue;
+                            float sz = (j == 0) ? 10 : ((node.radiusImage>5)?node.radiusImage:5);
+                            body = node.body;
+                            
+                            /*foreach (PXCMGesture.GeoNode.Label l in new PXCMGesture.GeoNode.Label[] {
+                                PXCMGesture.GeoNode.Label.LABEL_FINGER_THUMB,
+                                PXCMGesture.GeoNode.Label.LABEL_FINGER_INDEX,
+                                PXCMGesture.GeoNode.Label.LABEL_FINGER_MIDDLE,
+                                PXCMGesture.GeoNode.Label.LABEL_FINGER_RING,
+                                PXCMGesture.GeoNode.Label.LABEL_FINGER_PINKY
+                            })
+                            {
+                                PXCMGesture.GeoNode.Label flippedMask = ~l;
+                                PXCMGesture.GeoNode.Label body2 = body & 
+                            }*/
+
+                            if ((body & PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_PRIMARY) != 0)
+                            {
+                                body &= ~PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_PRIMARY;
+                                hand = PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_PRIMARY;
+                            }
+                            if ((body & PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_SECONDARY) != 0)
+                            {
+                                body &= ~PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_SECONDARY;
+                                hand = PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_SECONDARY;
+                            }
+                            if ((node.body & PXCMGesture.GeoNode.Label.LABEL_FINGER_THUMB) != 0
+                                || (node.body & PXCMGesture.GeoNode.Label.LABEL_FINGER_INDEX) != 0
+                                || (node.body & PXCMGesture.GeoNode.Label.LABEL_FINGER_MIDDLE) != 0
+                                || (node.body & PXCMGesture.GeoNode.Label.LABEL_FINGER_RING) != 0
+                                || (node.body & PXCMGesture.GeoNode.Label.LABEL_FINGER_PINKY) != 0)
+                            {
+                                //Log("Node (" + i + ", " + j + "): " + node.body + "\n");
+                                if (hand == PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_PRIMARY)
+                                    fingers[0]++;
+                                else if (hand == PXCMGesture.GeoNode.Label.LABEL_BODY_HAND_SECONDARY)
+                                    fingers[1]++;
+                                else
+                                    Log("Unknown hand above!\n");
+                            }
+
                             g.DrawEllipse(j > 5 ? red : green, nodes[i][j].positionImage.x - sz / 2, nodes[i][j].positionImage.y - sz / 2, sz, sz);
-                        }
-                    }
+                        } // all nodes
+                        Log(fingers[0] + " primary fingers up\n");
+                        Log(fingers[1] + " secondary fingers up\n");
+                    } // both hands
+                    
                     if (Params.Checked)
                     {
+                        Pen pen;
                         if (nodes[0][0].body > 0)
-                            g.DrawLine(cyan, 0, bitmap.Height - 1, 0, (100 - nodes[0][0].openness) * (bitmap.Height - 1) / 100);
+                        {
+                            pen = red;
+                            if (nodes[0][0].opennessState == PXCMGesture.GeoNode.Openness.LABEL_OPEN)
+                                pen = cyan;
+                            g.DrawLine(pen, 0, bitmap.Height - 1, 0, (100 - nodes[0][0].openness) * (bitmap.Height - 1) / 100);
+                            //Log("Hand 1 is " + nodes[0][0].opennessState + "\n");
+                        }
                         if (nodes[1][0].body > 0)
-                            g.DrawLine(cyan, bitmap.Width - 1, bitmap.Height - 1, bitmap.Width - 1, (100 - nodes[1][0].openness) * (bitmap.Height - 1) / 100);
+                        {
+                            pen = red;
+                            if (nodes[1][0].opennessState == PXCMGesture.GeoNode.Openness.LABEL_OPEN)
+                                pen = cyan;
+                            g.DrawLine(pen, bitmap.Width - 1, bitmap.Height - 1, bitmap.Width - 1, (100 - nodes[1][0].openness) * (bitmap.Height - 1) / 100);
+                            //Log("Hand 2 is " + nodes[1][0].opennessState + "\n");
+                        }
                     }
-                }
+                } // using Pens
+                //nodes[0][0].
+                Log("Primary Index (" + nodes[0][0].positionWorld.x
+                    + ", " + nodes[0][0].positionWorld.y
+                    + ", " + nodes[0][0].positionWorld.z
+                    + ")");
+                
                 g.Dispose();
-            }
-        }
+            } // lock
+        } // DisplayGeoNode
 
         private delegate void DisplayGesturesDelegate(PXCMGesture.Gesture[] gestures);
         public void DisplayGestures(PXCMGesture.Gesture[] gestures)
@@ -374,6 +448,11 @@ namespace GestureGUI
                 if (sfd.ShowDialog() == DialogResult.OK) return sfd.FileName;
                 return null;
             })) as string;
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            Start.PerformClick();
         }
     }
 }

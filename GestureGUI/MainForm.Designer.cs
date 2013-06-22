@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.Start = new System.Windows.Forms.Button();
             this.Stop = new System.Windows.Forms.Button();
             this.sourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -36,6 +37,10 @@
             this.PipelineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.simpleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.advancedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Live = new System.Windows.Forms.ToolStripMenuItem();
+            this.Playback = new System.Windows.Forms.ToolStripMenuItem();
+            this.Record = new System.Windows.Forms.ToolStripMenuItem();
             this.GeoNode = new System.Windows.Forms.CheckBox();
             this.Depth = new System.Windows.Forms.RadioButton();
             this.Labelmap = new System.Windows.Forms.RadioButton();
@@ -48,10 +53,11 @@
             this.Gesture1 = new System.Windows.Forms.PictureBox();
             this.Gesture2 = new System.Windows.Forms.PictureBox();
             this.Mirror = new System.Windows.Forms.CheckBox();
-            this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Live = new System.Windows.Forms.ToolStripMenuItem();
-            this.Playback = new System.Windows.Forms.ToolStripMenuItem();
-            this.Record = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtLog = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lblLeft = new System.Windows.Forms.Label();
+            this.lblRight = new System.Windows.Forms.Label();
             this.MainMenu.SuspendLayout();
             this.Status2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Panel2)).BeginInit();
@@ -123,16 +129,49 @@
             this.simpleToolStripMenuItem.Checked = true;
             this.simpleToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.simpleToolStripMenuItem.Name = "simpleToolStripMenuItem";
-            this.simpleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.simpleToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.simpleToolStripMenuItem.Text = "Simple";
             this.simpleToolStripMenuItem.Click += new System.EventHandler(this.simpleToolStripMenuItem_Click);
             // 
             // advancedToolStripMenuItem
             // 
             this.advancedToolStripMenuItem.Name = "advancedToolStripMenuItem";
-            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.advancedToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
             this.advancedToolStripMenuItem.Text = "Advanced";
             this.advancedToolStripMenuItem.Click += new System.EventHandler(this.advancedToolStripMenuItem_Click);
+            // 
+            // modeToolStripMenuItem
+            // 
+            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Live,
+            this.Playback,
+            this.Record});
+            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
+            this.modeToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.modeToolStripMenuItem.Text = "Mode";
+            // 
+            // Live
+            // 
+            this.Live.Checked = true;
+            this.Live.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Live.Name = "Live";
+            this.Live.Size = new System.Drawing.Size(121, 22);
+            this.Live.Text = "Live";
+            this.Live.Click += new System.EventHandler(this.Live_Click);
+            // 
+            // Playback
+            // 
+            this.Playback.Name = "Playback";
+            this.Playback.Size = new System.Drawing.Size(121, 22);
+            this.Playback.Text = "Playback";
+            this.Playback.Click += new System.EventHandler(this.Playback_Click);
+            // 
+            // Record
+            // 
+            this.Record.Name = "Record";
+            this.Record.Size = new System.Drawing.Size(121, 22);
+            this.Record.Text = "Record";
+            this.Record.Click += new System.EventHandler(this.Record_Click);
             // 
             // GeoNode
             // 
@@ -205,7 +244,7 @@
             this.Status2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusLabel});
             this.Status2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
-            this.Status2.Location = new System.Drawing.Point(0, 328);
+            this.Status2.Location = new System.Drawing.Point(0, 438);
             this.Status2.Name = "Status2";
             this.Status2.Size = new System.Drawing.Size(470, 20);
             this.Status2.TabIndex = 25;
@@ -221,6 +260,8 @@
             // 
             this.Scale2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.Scale2.AutoSize = true;
+            this.Scale2.Checked = true;
+            this.Scale2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Scale2.Location = new System.Drawing.Point(383, 73);
             this.Scale2.Name = "Scale2";
             this.Scale2.Size = new System.Drawing.Size(53, 17);
@@ -238,7 +279,7 @@
             this.Panel2.InitialImage = null;
             this.Panel2.Location = new System.Drawing.Point(12, 27);
             this.Panel2.Name = "Panel2";
-            this.Panel2.Size = new System.Drawing.Size(365, 296);
+            this.Panel2.Size = new System.Drawing.Size(365, 314);
             this.Panel2.TabIndex = 27;
             this.Panel2.TabStop = false;
             // 
@@ -281,44 +322,65 @@
             this.Mirror.Text = "Mirror";
             this.Mirror.UseVisualStyleBackColor = true;
             // 
-            // modeToolStripMenuItem
+            // txtLog
             // 
-            this.modeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.Live,
-            this.Playback,
-            this.Record});
-            this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-            this.modeToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
-            this.modeToolStripMenuItem.Text = "Mode";
+            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLog.Location = new System.Drawing.Point(13, 329);
+            this.txtLog.Multiline = true;
+            this.txtLog.Name = "txtLog";
+            this.txtLog.Size = new System.Drawing.Size(364, 106);
+            this.txtLog.TabIndex = 31;
             // 
-            // Live
+            // label1
             // 
-            this.Live.Checked = true;
-            this.Live.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.Live.Name = "Live";
-            this.Live.Size = new System.Drawing.Size(152, 22);
-            this.Live.Text = "Live";
-            this.Live.Click += new System.EventHandler(this.Live_Click);
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(380, 329);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(33, 13);
+            this.label1.TabIndex = 32;
+            this.label1.Text = "Left:";
             // 
-            // Playback
+            // label2
             // 
-            this.Playback.Name = "Playback";
-            this.Playback.Size = new System.Drawing.Size(152, 22);
-            this.Playback.Text = "Playback";
-            this.Playback.Click += new System.EventHandler(this.Playback_Click);
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(380, 359);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(41, 13);
+            this.label2.TabIndex = 33;
+            this.label2.Text = "Right:";
             // 
-            // Record
+            // lblLeft
             // 
-            this.Record.Name = "Record";
-            this.Record.Size = new System.Drawing.Size(152, 22);
-            this.Record.Text = "Record";
-            this.Record.Click += new System.EventHandler(this.Record_Click);
+            this.lblLeft.AutoSize = true;
+            this.lblLeft.Location = new System.Drawing.Point(383, 346);
+            this.lblLeft.Name = "lblLeft";
+            this.lblLeft.Size = new System.Drawing.Size(57, 13);
+            this.lblLeft.TabIndex = 34;
+            this.lblLeft.Text = "(unknown)";
+            // 
+            // lblRight
+            // 
+            this.lblRight.AutoSize = true;
+            this.lblRight.Location = new System.Drawing.Point(383, 372);
+            this.lblRight.Name = "lblRight";
+            this.lblRight.Size = new System.Drawing.Size(57, 13);
+            this.lblRight.TabIndex = 35;
+            this.lblRight.Text = "(unknown)";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(470, 348);
+            this.ClientSize = new System.Drawing.Size(470, 458);
+            this.Controls.Add(this.lblRight);
+            this.Controls.Add(this.lblLeft);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtLog);
             this.Controls.Add(this.Mirror);
             this.Controls.Add(this.Gesture2);
             this.Controls.Add(this.Gesture1);
@@ -334,11 +396,12 @@
             this.Controls.Add(this.Start);
             this.Controls.Add(this.MainMenu);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "MainForm";
             this.Text = "Gesture Viewer";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.MainMenu.ResumeLayout(false);
             this.MainMenu.PerformLayout();
             this.Status2.ResumeLayout(false);
@@ -377,5 +440,10 @@
         private System.Windows.Forms.ToolStripMenuItem Live;
         private System.Windows.Forms.ToolStripMenuItem Playback;
         private System.Windows.Forms.ToolStripMenuItem Record;
+        private System.Windows.Forms.TextBox txtLog;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblLeft;
+        private System.Windows.Forms.Label lblRight;
     }
 }
