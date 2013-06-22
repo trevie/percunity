@@ -1,0 +1,11 @@
+C:\Program Files\Intel\PCSDK\framework\CSharp\gesture_viewer.cs\bin\x86\Debug\gesture_viewer.cs.exe
+C:\Program Files\Intel\PCSDK\framework\CSharp\gesture_viewer.cs\bin\x86\Debug\gesture_viewer.cs.pdb
+C:\Program Files\Intel\PCSDK\framework\CSharp\gesture_viewer.cs\bin\x86\Debug\libpxcclr.dll
+C:\Program Files\Intel\PCSDK\framework\CSharp\gesture_viewer.cs\obj\x86\Debug\gesture_viewer.cs_vs2010-12.csprojResolveAssemblyReference.cache
+C:\Program Files\Intel\PCSDK\framework\CSharp\gesture_viewer.cs\obj\x86\Debug\gesture_viewer.cs.MainForm.resources
+C:\Program Files\Intel\PCSDK\framework\CSharp\gesture_viewer.cs\obj\x86\Debug\gesture_viewer.cs.Properties.Resources.resources
+C:\Program Files\Intel\PCSDK\framework\CSharp\gesture_viewer.cs\obj\x86\Debug\gesture_viewer.cs_vs2010-12.csproj.GenerateResource.Cache
+C:\Program Files\Intel\PCSDK\framework\CSharp\gesture_viewer.cs\obj\x86\Debug\gesture_viewer.cs.exe
+C:\Program Files\Intel\PCSDK\framework\CSharp\gesture_viewer.cs\obj\x86\Debug\gesture_viewer.cs.pdb
+C:\Users\Trevie\Dropbox\src\percunity\GestureGUI\obj\x86\Debug\gesture_viewer.cs.exe
+C:\Users\Trevie\Dropbox\src\percunity\GestureGUI\obj\x86\Debug\gesture_viewer.cs.pdb
