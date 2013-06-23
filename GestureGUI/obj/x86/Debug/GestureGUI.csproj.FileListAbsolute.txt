@@ -6,3 +6,5 @@ C:\Users\Trevie\Dropbox\src\percunity\GestureGUI\bin\x86\Debug\GestureGUI.cs.pdb
 C:\Users\Trevie\Dropbox\src\percunity\GestureGUI\obj\x86\Debug\GestureGUI.MainForm.resources
 C:\Users\Trevie\Dropbox\src\percunity\GestureGUI\obj\x86\Debug\GestureGUI.cs.exe
 C:\Users\Trevie\Dropbox\src\percunity\GestureGUI\obj\x86\Debug\GestureGUI.cs.pdb
+C:\Users\Trevie\Dropbox\src\percunity\GestureGUI\bin\x86\Debug\GestureGUI.cs.exe.config
+C:\Users\Trevie\Dropbox\src\percunity\GestureGUI\bin\x86\Debug\InputManager.dll
