@@ -350,8 +350,8 @@ namespace GestureGUI
                     }
                 } // using Pens
 
-                int right = -1;
-                int left = -1;
+                int right = -1; // which node has the right hand (0 = primary, 1 = secondary)
+                int left = -1;  // same, for left hand.  If both are in the same region, this is NOT set.
                 bool openRight = false, openLeft = false;
 
                 if (nodes[0][8].body > 0 && nodes[0][8].positionWorld.x < 0
@@ -391,61 +391,67 @@ namespace GestureGUI
                     UpdatelblLeft("(none)");
                 //Log(nodes[0][8].body + " and " + nodes[1][8].body + "\n");
                 
+                // Actual motion logic
                 float x, y, z;
-                if (right >= 0)
+                if (right >= 0) // Is there a (single) handle on the right half of the view?
                 {
+                    // get x, y, z of right hand's center of hand node
                     x = nodes[right][8].positionWorld.x;
                     y = nodes[right][8].positionWorld.y;
                     z = nodes[right][8].positionWorld.z;
 
                     if (openRight)
                     {
-                        float filterDistance = 0.01f;
+                        float filterDistance = 0.03f;
+                        int moveDist = 100;
+                        float xDelta = Math.Abs(x - rightLastX);
+                        float yDelta = Math.Abs(y - rightLastY);
+                        float zDelta = Math.Abs(z - rightLastZ);
 
-                        if (x < rightLastX && Math.Abs(x - rightLastX) > filterDistance)
+                        if (x < rightLastX && xDelta > filterDistance)
                         {
                             Log("Right moved right\n");
-                            myAppMan.MoveXY(1, 0);
+                            myAppMan.MoveXY((int)((float)moveDist * xDelta), 0);
                             rightLastX = x;
                         }
-                        else if (x > rightLastX)
+                        else if (x > rightLastX && xDelta > filterDistance)
                         {
                             Log("Right moved left\n");
-                            myAppMan.MoveXY(-1, 0);
+                            myAppMan.MoveXY(-(int)((float)moveDist * xDelta), 0);
                             rightLastX = x;
                         }
-                        else
-                            Log("Right didn't move\n");
+                        //else
+                          //  Log("Right didn't move\n");
 
-                        if (y < rightLastY)
+                        if (y < rightLastY && yDelta > filterDistance)
                         {
                             myAppMan.ZoomIn();
                             Log("Right zoom in\n");
                             rightLastY = y;
                         }
-                        else if (y > rightLastY)
+                        else if (y > rightLastY && yDelta > filterDistance)
                         {
                             myAppMan.ZoomOut();
                             Log("Right zoom out\n");
                             rightLastY = y;
                         }
-                        else
-                            Log("Right no zoom\n");
+                        //else
+                          //  Log("Right no zoom\n");
 
-                        if (z < rightLastZ)
+                        if (z < rightLastZ && zDelta > filterDistance)
                         {
-                            myAppMan.MoveXY(0, 1);
+                            myAppMan.MoveXY(0, (int)((float)moveDist * zDelta));
                             Log("Right move up\n");
                             rightLastZ = z;
                         }
-                        else if (z > rightLastZ)
+                        else if (z > rightLastZ && zDelta > filterDistance)
                         {
-                            myAppMan.MoveXY(0, -1);
+                            myAppMan.MoveXY(0, -(int)((float)moveDist * zDelta));
                             Log("Right move down\n");
                             rightLastZ = z;
                         }
-                        else
-                            Log("Right no Z\n");
+                        //else
+                          //  Log("Right no Z\n");
                     }
 
                 }
