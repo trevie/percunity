@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+//using Appl
 
 namespace GestureGUI
 {
@@ -19,6 +20,10 @@ namespace GestureGUI
         private Bitmap bitmap = null;
         private Hashtable pictures;
         private Timer timer = new Timer();
+        private ApplicationManipulator myAppMan = new ApplicationManipulator();
+
+        float leftLastX, leftLastY, leftLastZ;
+        float rightLastX, rightLastY, rightLastZ;
 
         public MainForm(PXCMSession session)
         {
@@ -257,6 +262,7 @@ namespace GestureGUI
             lock(this) {
                 if (bitmap == null) return;
                 if (nodes == null) return;
+                bool primaryOpen = false, secondaryOpen = false;
                 Graphics g = Graphics.FromImage(bitmap);
                 using (Pen red = new Pen(Color.Red, 3.0f), green = new Pen(Color.Green, 3.0f), cyan = new Pen(Color.Cyan, 3.0f))
                 {
@@ -328,6 +334,8 @@ namespace GestureGUI
                                 pen = cyan;
                             g.DrawLine(pen, 0, bitmap.Height - 1, 0, (100 - nodes[0][0].openness) * (bitmap.Height - 1) / 100);
                             //Log("Hand 1 is " + nodes[0][0].opennessState + "\n");
+                            if (nodes[0][0].opennessState == PXCMGesture.GeoNode.Openness.LABEL_OPEN)
+                                primaryOpen = true;
                         }
                         if (nodes[1][0].body > 0)
                         {
@@ -336,17 +344,31 @@ namespace GestureGUI
                                 pen = cyan;
                             g.DrawLine(pen, bitmap.Width - 1, bitmap.Height - 1, bitmap.Width - 1, (100 - nodes[1][0].openness) * (bitmap.Height - 1) / 100);
                             //Log("Hand 2 is " + nodes[1][0].opennessState + "\n");
+                            if (nodes[1][0].opennessState == PXCMGesture.GeoNode.Openness.LABEL_OPEN)
+                                secondaryOpen = true;
                         }
                     }
                 } // using Pens
+
+                int right = -1;
+                int left = -1;
+                bool openRight = false, openLeft = false;
 
                 if (nodes[0][8].body > 0 && nodes[0][8].positionWorld.x < 0
                     && nodes[1][8].body > 0 && nodes[1][8].positionWorld.x < 0)
                     UpdatelblRight("Both");
                 else if (nodes[0][8].body > 0 && nodes[0][8].positionWorld.x < 0)
-                    UpdatelblRight("Primary");
+                {
+                    UpdatelblRight(primaryOpen ? "Primary (open)" : "Primary (closed)");
+                    right = 0;
+                    openRight = primaryOpen;
+                }
                 else if (nodes[1][8].body > 0 && nodes[1][8].positionWorld.x < 0)
-                    UpdatelblRight("Secondary");
+                {
+                    UpdatelblRight(secondaryOpen ? "Secondary (open)" : "Secondary (closed)");
+                    right = 1;
+                    openRight = secondaryOpen;
+                }
                 else
                     UpdatelblRight("(none)");
 
@@ -354,13 +376,80 @@ namespace GestureGUI
                     && nodes[1][8].body > 0 && nodes[1][8].positionWorld.x >= 0)
                     UpdatelblLeft("Both");
                 else if (nodes[0][8].body > 0 && nodes[0][8].positionWorld.x >= 0)
-                    UpdatelblLeft("Primary");
+                {
+                    UpdatelblLeft(primaryOpen ? "Primary (open)" : "Primary (closed)");
+                    left = 0;
+                    openLeft = primaryOpen;
+                }
                 else if (nodes[1][8].body > 0 && nodes[1][8].positionWorld.x >= 0)
-                    UpdatelblLeft("Secondary");
+                {
+                    UpdatelblLeft(secondaryOpen ? "Secondary (open)" : "Secondary (closed)");
+                    left = 1;
+                    openLeft = secondaryOpen;
+                }
                 else
                     UpdatelblLeft("(none)");
                 //Log(nodes[0][8].body + " and " + nodes[1][8].body + "\n");
                 
+                float x, y, z;
+                if (right >= 0)
+                {
+                    x = nodes[right][8].positionWorld.x;
+                    y = nodes[right][8].positionWorld.y;
+                    z = nodes[right][8].positionWorld.z;
+
+                    if (openRight)
+                    {
+                        float filterDistance = 0.01f;
+
+                        if (x < rightLastX && Math.Abs(x - rightLastX) > filterDistance)
+                        {
+                            Log("Right moved right\n");
+                            myAppMan.MoveXY(1, 0);
+                            rightLastX = x;
+                        }
+                        else if (x > rightLastX)
+                        {
+                            Log("Right moved left\n");
+                            myAppMan.MoveXY(-1, 0);
+                            rightLastX = x;
+                        }
+                        else
+                            Log("Right didn't move\n");
+
+                        if (y < rightLastY)
+                        {
+                            myAppMan.ZoomIn();
+                            Log("Right zoom in\n");
+                            rightLastY = y;
+                        }
+                        else if (y > rightLastY)
+                        {
+                            myAppMan.ZoomOut();
+                            Log("Right zoom out\n");
+                            rightLastY = y;
+                        }
+                        else
+                            Log("Right no zoom\n");
+
+                        if (z < rightLastZ)
+                        {
+                            myAppMan.MoveXY(0, 1);
+                            Log("Right move up\n");
+                            rightLastZ = z;
+                        }
+                        else if (z > rightLastZ)
+                        {
+                            myAppMan.MoveXY(0, -1);
+                            Log("Right move down\n");
+                            rightLastZ = z;
+                        }
+                        else
+                            Log("Right no Z\n");
+                    }
+
+                }
+
                 g.Dispose();
             } // lock
         } // DisplayGeoNode

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace GestureGUI.cs
+namespace GestureGUI
 {
     public static class Win32
     {
